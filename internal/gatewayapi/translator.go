@@ -9,7 +9,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/envoyproxy/gateway/internal/metrics/translator"
 	"golang.org/x/exp/maps"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -238,6 +240,18 @@ func newTranslateResult(
 
 func (t *Translator) Translate(resources *resource.Resources) (*TranslateResult, error) {
 	var errs error
+	provider := translator.TranslatorMetricsProvider{}
+	start := time.Now()
+	defer func() {
+		spent := time.Since(start)
+		result := "success"
+		if errs != nil {
+			result = "error"
+			provider.NewTranslationFailureMetric().Inc()
+		}
+		provider.NewTranslationDurationMetric(result).Observe(spent.Seconds())
+		provider.NewTranslationCountMetric(result).Inc()
+	}()
 
 	// Preprocessing to improve get resources operations performance.
 	translatorContext := &TranslatorContext{}

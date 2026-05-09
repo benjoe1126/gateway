@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/envoyproxy/gateway/internal/metrics/translator"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/otel"
@@ -115,6 +116,7 @@ func (r *Runner) newOptions() (registerOptions, error) {
 		reg := prometheus.NewRegistry()
 		restclient.RegisterClientMetricsWithoutRequestTotal(reg)
 		workqueue.RegisterMetrics(reg)
+		translator.RegisterMetrics(reg)
 		newOpts.pullOptions.registry = metricsserver.Registry
 		newOpts.pullOptions.gatherer = prometheus.Gatherers{
 			metricsserver.Registry, reg,
