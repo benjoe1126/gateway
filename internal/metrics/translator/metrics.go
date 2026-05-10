@@ -9,10 +9,10 @@ import (
 const subsystem = "translator"
 
 const (
-	translationCountMetricName    = "envoy_gateway_translation_count"
-	translationDurationMetricName = "envoy_gateway_translation_duration"
-	translatedResourcesMetricName = "envoy_gateway_translated_resources"
-	translationFailuresMetricName = "envoy_gateway_translation_failures"
+	translationCountMetricName    = "translation_count"
+	translationDurationMetricName = "translation_duration"
+	translatedResourcesMetricName = "translated_resources"
+	translationFailuresMetricName = "translation_failures"
 )
 
 const (
@@ -51,8 +51,9 @@ var (
 	)
 	translationFailures = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: translationFailuresMetricName,
-			Help: translationFailuresMetricDesc,
+			Name:      translationFailuresMetricName,
+			Help:      translationFailuresMetricDesc,
+			Subsystem: subsystem,
 		},
 	)
 )
