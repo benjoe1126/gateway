@@ -11,14 +11,12 @@ const subsystem = "translator"
 const (
 	translationCountMetricName    = "translation_count"
 	translationDurationMetricName = "translation_duration"
-	translatedResourcesMetricName = "translated_resources"
 	translationFailuresMetricName = "translation_failures"
 )
 
 const (
 	translationCountMetricDesc    = "Number of times Translate was called"
 	translationDurationMetricDesc = "Time spend translating resources"
-	translatedResourcesMetricDesc = "Number of resources translated"
 	translationFailuresMetricDesc = "Number of resource translation failures"
 )
 
@@ -41,14 +39,6 @@ var (
 		},
 		[]string{"result"},
 	)
-	translatedResources = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name:      translatedResourcesMetricName,
-			Help:      translatedResourcesMetricDesc,
-			Subsystem: subsystem,
-		},
-		[]string{"resource", "status"},
-	)
 	translationFailures = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name:      translationFailuresMetricName,
@@ -64,10 +54,6 @@ func (TranslatorMetricsProvider) NewTranslationFailureMetric() prometheus.Counte
 	return translationFailures
 }
 
-func (TranslatorMetricsProvider) NewTranslatedResourcesMetric(resource, status string) prometheus.Counter {
-	return translatedResources.With(prometheus.Labels{"resource": resource, "status": status})
-}
-
 func (TranslatorMetricsProvider) NewTranslationDurationMetric(result string) prometheus.Observer {
 	return translationDurationSeconds.With(prometheus.Labels{"result": result})
 }
@@ -78,6 +64,6 @@ func (TranslatorMetricsProvider) NewTranslationCountMetric(result string) promet
 
 func RegisterMetrics(registry prometheus.Registerer) {
 	registerOnce.Do(func() {
-		registry.MustRegister(translationCount, translationDurationSeconds, translatedResources, translationFailures)
+		registry.MustRegister(translationCount, translationDurationSeconds, translationFailures)
 	})
 }
