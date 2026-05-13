@@ -10,8 +10,8 @@ const subsystem = "translator"
 
 const (
 	translationCountMetricName    = "translation_count"
-	translationDurationMetricName = "translation_duration"
-	translationFailuresMetricName = "translation_failures"
+	translationDurationMetricName = "translation_duration_seconds"
+	translationFailuresMetricName = "translation_failures_count"
 )
 
 const (
